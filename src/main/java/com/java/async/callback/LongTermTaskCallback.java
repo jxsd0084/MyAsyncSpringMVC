@@ -1,4 +1,4 @@
-package com.java.async.support;
+package com.java.async.callback;
 
 /**
  * @author jakeChen

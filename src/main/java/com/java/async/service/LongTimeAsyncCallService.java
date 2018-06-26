@@ -1,6 +1,8 @@
 package com.java.async.service;
 
-import com.java.async.support.LongTermTaskCallback;
+import com.java.async.callback.LongTermTaskCallback;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -11,25 +13,36 @@ import java.util.concurrent.TimeUnit;
  * @Description:
  * @date 26/06/2018
  */
+@Service("longTimeAsyncCallService")
 public class LongTimeAsyncCallService {
 
-	private final int CorePoolSize = 4;
-	private final int NeedSeconds = 3;
+	private final int CORE_POOL_SIZE = 4;
+	private final int NEED_SECONDS = 3;
 
-	private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(CorePoolSize);
+	private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(CORE_POOL_SIZE);
 
 
 
 	public void makeRemoteCallAndUnknownWhenFinish(LongTermTaskCallback callback) {
-		System.out.println("完成此任务需要 : " + NeedSeconds + " 秒");
+		System.out.println("完成此任务需要 : " + NEED_SECONDS + " 秒");
 		scheduler.schedule(new Runnable() {
 			@Override
 			public void run() {
 				callback.callback("长时间异步调用完成.");
 			}
-		}, 0L, TimeUnit.SECONDS);
+		}, NEED_SECONDS, TimeUnit.SECONDS);
 	}
 
+
+	@Async
+	public void asyncDoSth() {
+		try {
+			System.out.println("async do sth start");
+			Thread.sleep(5000);
+			System.out.println("async do sth stop");
+		} catch (InterruptedException e) {
+		}
+	}
 	
 
 }

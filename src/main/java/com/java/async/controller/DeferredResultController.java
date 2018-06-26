@@ -1,7 +1,7 @@
 package com.java.async.controller;
 
 import com.java.async.service.LongTimeAsyncCallService;
-import com.java.async.support.LongTermTaskCallback;
+import com.java.async.callback.LongTermTaskCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,7 +27,7 @@ public class DeferredResultController {
 
 		DeferredResult<ModelAndView> deferredResult = new DeferredResult<>();
 
-		System.out.println("/asynctask 调用！thread id is : " + Thread.currentThread().getId());
+		System.out.println("/asynctask 调用！thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
 
 		longTimeAsyncCallService.makeRemoteCallAndUnknownWhenFinish(new LongTermTaskCallback() {
 
@@ -40,6 +40,21 @@ public class DeferredResultController {
 
 				mav.addObject("result", result);
 
+				deferredResult.setResult(mav);
+			}
+		});
+
+		deferredResult.onTimeout(new Runnable() {
+
+			@Override
+			public void run() {
+
+				System.out.println("async task timeout:" + Thread.currentThread().getId());
+
+				ModelAndView mav = new ModelAndView("remotecalltask");
+
+				mav.addObject("result", "异步调用执行超时");
+				
 				deferredResult.setResult(mav);
 			}
 		});
