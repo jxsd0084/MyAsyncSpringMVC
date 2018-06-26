@@ -1,7 +1,5 @@
 package com.java.async.controller;
 
-import com.java.async.service.LongTimeAsyncCallService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -18,8 +16,8 @@ import org.springframework.web.servlet.ModelAndView;
 public class DeferredResultController {
 
 
-	@Autowired
-	private LongTimeAsyncCallService longTimeAsyncCallService;
+	// @Autowired
+	// private LongTimeAsyncCallService longTimeAsyncCallService;
 
 
 	@RequestMapping(value = "/asynctask", method = RequestMethod.GET)
@@ -29,16 +27,16 @@ public class DeferredResultController {
 
 		System.out.println("/asynctask调用！thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
 
-		longTimeAsyncCallService.makeRemoteCallAndUnknownWhenFinish(result -> {
-
-			System.out.println("异步调用执行完成, thread id is : " + Thread.currentThread().getId());
-
-			ModelAndView mav = new ModelAndView("remotecalltask");
-
-			mav.addObject("result", result);
-
-			deferredResult.setResult(mav);
-		});
+		// longTimeAsyncCallService.makeRemoteCallAndUnknownWhenFinish(result -> {
+		//
+		// 	System.out.println("异步调用执行完成, thread id is : " + Thread.currentThread().getId());
+		//
+		// 	ModelAndView mav = new ModelAndView("remotecalltask");
+		//
+		// 	mav.addObject("result", result);
+		//
+		// 	deferredResult.setResult(mav);
+		// });
 
 		deferredResult.onTimeout(() -> {
 
