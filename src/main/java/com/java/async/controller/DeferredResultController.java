@@ -1,7 +1,6 @@
 package com.java.async.controller;
 
 import com.java.async.service.LongTimeAsyncCallService;
-import com.java.async.callback.LongTermTaskCallback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +14,7 @@ import org.springframework.web.servlet.ModelAndView;
  * @date 26/06/2018
  */
 @Controller
+@RequestMapping("/async")
 public class DeferredResultController {
 
 
@@ -27,36 +27,28 @@ public class DeferredResultController {
 
 		DeferredResult<ModelAndView> deferredResult = new DeferredResult<>();
 
-		System.out.println("/asynctask 调用！thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
+		System.out.println("/asynctask调用！thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
 
-		longTimeAsyncCallService.makeRemoteCallAndUnknownWhenFinish(new LongTermTaskCallback() {
+		longTimeAsyncCallService.makeRemoteCallAndUnknownWhenFinish(result -> {
 
-			@Override
-			public void callback(Object result) {
+			System.out.println("异步调用执行完成, thread id is : " + Thread.currentThread().getId());
 
-				System.out.println("异步调用执行完成, thread id is : " + Thread.currentThread().getId());
+			ModelAndView mav = new ModelAndView("remotecalltask");
 
-				ModelAndView mav = new ModelAndView("remotecalltask");
+			mav.addObject("result", result);
 
-				mav.addObject("result", result);
-
-				deferredResult.setResult(mav);
-			}
+			deferredResult.setResult(mav);
 		});
 
-		deferredResult.onTimeout(new Runnable() {
+		deferredResult.onTimeout(() -> {
 
-			@Override
-			public void run() {
+			System.out.println("async task timeout:" + Thread.currentThread().getId());
 
-				System.out.println("async task timeout:" + Thread.currentThread().getId());
+			ModelAndView mav = new ModelAndView("remotecalltask");
 
-				ModelAndView mav = new ModelAndView("remotecalltask");
+			mav.addObject("result", "异步调用执行超时");
 
-				mav.addObject("result", "异步调用执行超时");
-				
-				deferredResult.setResult(mav);
-			}
+			deferredResult.setResult(mav);
 		});
 
 		return deferredResult;

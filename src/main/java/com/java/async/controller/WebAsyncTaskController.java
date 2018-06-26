@@ -14,46 +14,41 @@ import java.util.concurrent.Callable;
  * @date 26/06/2018
  */
 @Controller
+@RequestMapping("/async")
 public class WebAsyncTaskController {
 
 
 	@RequestMapping(value = "/longtimetask", method = RequestMethod.GET)
 	public WebAsyncTask longTimeTask() {
 
-		System.out.println("/longtimetask被调用 thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
+		System.out.println("/longtimetask 被调用 thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
 
-		Callable<ModelAndView> callable = new Callable<ModelAndView>() {
+		Callable<ModelAndView> callable = () -> {
 
-			public ModelAndView call() throws Exception {
+			Thread.sleep(3000L); // 假设是一些长时间任务
 
-				Thread.sleep(3000L); // 假设是一些长时间任务
+			ModelAndView mav = new ModelAndView("longtimetask");
 
-				ModelAndView mav = new ModelAndView("longtimetask");
+			mav.addObject("result", "执行成功");
 
-				mav.addObject("result", "执行成功");
+			System.out.println("执行成功 thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
 
-				System.out.println("执行成功 thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
-
-				return mav;
-			}
+			return mav;
 		};
 
 		// return new WebAsyncTask(callable);
 
 		WebAsyncTask asyncTask = new WebAsyncTask(2000, callable);
 
-		asyncTask.onTimeout(new Callable<ModelAndView>() {
+		asyncTask.onTimeout((Callable<ModelAndView>) () -> {
 
-			public ModelAndView call() throws Exception {
+			ModelAndView mav = new ModelAndView("remotecalltask");
 
-				ModelAndView mav = new ModelAndView("remotecalltask");
+			mav.addObject("result", "执行超时");
 
-				mav.addObject("result", "执行超时");
+			System.out.println("task timeout:" + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
 
-				System.out.println("task timeout:" + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
-
-				return mav;
-			}
+			return mav;
 		});
 
 		return new WebAsyncTask(3000, callable);

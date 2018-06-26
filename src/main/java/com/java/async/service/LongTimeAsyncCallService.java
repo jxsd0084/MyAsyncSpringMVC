@@ -25,22 +25,24 @@ public class LongTimeAsyncCallService {
 
 	public void makeRemoteCallAndUnknownWhenFinish(LongTermTaskCallback callback) {
 		System.out.println("完成此任务需要 : " + NEED_SECONDS + " 秒");
-		scheduler.schedule(new Runnable() {
-			@Override
-			public void run() {
-				callback.callback("长时间异步调用完成.");
-			}
-		}, NEED_SECONDS, TimeUnit.SECONDS);
+		scheduler.schedule(() -> callback.callback("长时间异步调用完成."), NEED_SECONDS, TimeUnit.SECONDS);
 	}
+
 
 
 	@Async
 	public void asyncDoSth() {
+	
 		try {
+
 			System.out.println("async do sth start");
-			Thread.sleep(5000);
+
+			Thread.sleep(5000L);
+
 			System.out.println("async do sth stop");
+
 		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
 	

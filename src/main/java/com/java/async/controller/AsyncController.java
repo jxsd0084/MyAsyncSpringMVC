@@ -12,12 +12,13 @@ import org.springframework.web.servlet.ModelAndView;
  * @date 26/06/2018
  */
 @Controller
+@RequestMapping("/async")
 public class AsyncController {
 
 	@Autowired
 	private LongTimeAsyncCallService longTimeAsyncCallService;
 
-	@RequestMapping("/async")
+	@RequestMapping("/task")
 	public ModelAndView async() {
 
 		ModelAndView mav = new ModelAndView("remotecalltask");
