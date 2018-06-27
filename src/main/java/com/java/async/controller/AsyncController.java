@@ -1,5 +1,7 @@
 package com.java.async.controller;
 
+import com.java.async.service.LongTimeAsyncCallServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -13,15 +15,15 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/async")
 public class AsyncController {
 
-	// @Autowired
-	// private LongTimeAsyncCallService longTimeAsyncCallService;
+	@Autowired
+	private LongTimeAsyncCallServiceImpl longTimeAsyncCallService;
 
 	@RequestMapping("/task")
 	public ModelAndView async() {
 
 		ModelAndView mav = new ModelAndView("remotecalltask");
 
-		// longTimeAsyncCallService.asyncDoSth();
+		longTimeAsyncCallService.asyncDoSth();
 
 		mav.addObject("result", "异步返回");
 

@@ -12,7 +12,7 @@
        http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
 	<!-- 配置扫描的包 -->
-	<context:component-scan base-package="com.java.async.controller" />
+	<context:component-scan base-package="com.java.async.*" />
 
 	<!-- 注册HandlerMapper、HandlerAdapter两个映射类 -->
 	<mvc:annotation-driven />
