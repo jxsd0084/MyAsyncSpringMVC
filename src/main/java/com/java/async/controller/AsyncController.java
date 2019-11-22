@@ -15,20 +15,17 @@ import org.springframework.web.servlet.ModelAndView;
 @RequestMapping("/async")
 public class AsyncController {
 
+
 	@Autowired
-	private LongTimeAsyncCallServiceImpl longTimeAsyncCallService;
+	private LongTimeAsyncCallServiceImpl service;
+
 
 	@RequestMapping("/task")
 	public ModelAndView async() {
-
-		ModelAndView mav = new ModelAndView("remotecalltask");
-
-		longTimeAsyncCallService.asyncDoSth();
-
+		ModelAndView mav = new ModelAndView("task");
+		service.asyncMethod();
 		mav.addObject("result", "异步返回");
-
 		return mav;
-
 	}
 
 }

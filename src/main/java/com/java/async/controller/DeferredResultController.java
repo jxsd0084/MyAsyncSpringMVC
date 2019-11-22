@@ -1,5 +1,7 @@
 package com.java.async.controller;
 
+import com.java.async.service.LongTimeAsyncCallService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -16,41 +18,36 @@ import org.springframework.web.servlet.ModelAndView;
 public class DeferredResultController {
 
 
-	// @Autowired
-	// private LongTimeAsyncCallService longTimeAsyncCallService;
+    @Autowired
+    private LongTimeAsyncCallService service;
 
 
-	@RequestMapping(value = "/asynctask", method = RequestMethod.GET)
-	public DeferredResult<ModelAndView> asyncTask() {
+    @RequestMapping(value = "/task1", method = RequestMethod.GET)
+    public DeferredResult<ModelAndView> task1() {
+        DeferredResult<ModelAndView> result = new DeferredResult<>();
+        System.out.println("/task1 调用！thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
+        result.onTimeout(() -> {
+            System.out.println("async task timeout:" + Thread.currentThread().getId());
+            ModelAndView mav = new ModelAndView("task1");
+            mav.addObject("result", "异步调用执行超时");
+            result.setResult(mav);
+        });
+        return result;
+    }
 
-		DeferredResult<ModelAndView> deferredResult = new DeferredResult<>();
 
-		System.out.println("/asynctask调用！thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
-
-		// longTimeAsyncCallService.makeRemoteCallAndUnknownWhenFinish(result -> {
-		//
-		// 	System.out.println("异步调用执行完成, thread id is : " + Thread.currentThread().getId());
-		//
-		// 	ModelAndView mav = new ModelAndView("remotecalltask");
-		//
-		// 	mav.addObject("result", result);
-		//
-		// 	deferredResult.setResult(mav);
-		// });
-
-		deferredResult.onTimeout(() -> {
-
-			System.out.println("async task timeout:" + Thread.currentThread().getId());
-
-			ModelAndView mav = new ModelAndView("remotecalltask");
-
-			mav.addObject("result", "异步调用执行超时");
-
-			deferredResult.setResult(mav);
-		});
-
-		return deferredResult;
-	}
+    @RequestMapping(value = "/task2", method = RequestMethod.GET)
+    public DeferredResult<ModelAndView> task2() {
+        DeferredResult<ModelAndView> result = new DeferredResult<>();
+        System.out.println("/task2 调用！thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
+        service.callback(r -> {
+            System.out.println("异步调用执行完成, thread id is : " + Thread.currentThread().getId());
+            ModelAndView mav = new ModelAndView("task2");
+            mav.addObject("result", r);
+            result.setResult(mav);
+        });
+        return result;
+    }
 
 
 }

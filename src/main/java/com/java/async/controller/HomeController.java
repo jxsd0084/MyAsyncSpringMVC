@@ -10,12 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @date 26/06/2018
  */
 @Controller
-@RequestMapping("/demo")
-public class DemoController {
+public class HomeController {
 
 	@RequestMapping("/index")
 	public String index() {
-		return "demo";
+		return "home";
 	}
 
 }

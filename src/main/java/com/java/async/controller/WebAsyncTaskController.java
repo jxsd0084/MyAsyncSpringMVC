@@ -18,41 +18,39 @@ import java.util.concurrent.Callable;
 public class WebAsyncTaskController {
 
 
-	@RequestMapping(value = "/longtimetask", method = RequestMethod.GET)
-	public WebAsyncTask longTimeTask() {
+    @RequestMapping(value = "/task3", method = RequestMethod.GET)
+    public WebAsyncTask task3() {
+        System.out.println("/task3 被调用 thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
+        Callable<ModelAndView> c = () -> {
+            Thread.sleep(3000L); // 假设是一些长时间任务
+            ModelAndView mav = new ModelAndView("longtimetask");
+            mav.addObject("result", "执行成功");
+            System.out.println("执行成功 thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
+            return mav;
+        };
+        WebAsyncTask asyncTask = new WebAsyncTask(2000, c);
+        asyncTask.onTimeout((Callable<ModelAndView>) () -> {
+            ModelAndView mav = new ModelAndView("remotecalltask");
+            mav.addObject("result", "执行超时");
+            System.out.println("task timeout:" + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
+            return mav;
+        });
+        return new WebAsyncTask(3000, c);
+    }
 
-		System.out.println("/longtimetask 被调用 thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
 
-		Callable<ModelAndView> callable = () -> {
-
-			Thread.sleep(3000L); // 假设是一些长时间任务
-
-			ModelAndView mav = new ModelAndView("longtimetask");
-
-			mav.addObject("result", "执行成功");
-
-			System.out.println("执行成功 thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
-
-			return mav;
-		};
-
-		// return new WebAsyncTask(callable);
-
-		WebAsyncTask asyncTask = new WebAsyncTask(2000, callable);
-
-		asyncTask.onTimeout((Callable<ModelAndView>) () -> {
-
-			ModelAndView mav = new ModelAndView("remotecalltask");
-
-			mav.addObject("result", "执行超时");
-
-			System.out.println("task timeout:" + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
-
-			return mav;
-		});
-
-		return new WebAsyncTask(3000, callable);
-	}
+    @RequestMapping(value = "/task4", method = RequestMethod.GET)
+    public WebAsyncTask task4() {
+        System.out.println("/longtimetask 被调用 thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
+        Callable<ModelAndView> c = () -> {
+            Thread.sleep(3000L); // 假设是一些长时间任务
+            ModelAndView mav = new ModelAndView("longtimetask");
+            mav.addObject("result", "执行成功");
+            System.out.println("执行成功 thread id is : " + Thread.currentThread().getId() + " - " + Thread.currentThread().getName());
+            return mav;
+        };
+        return new WebAsyncTask(c);
+    }
 
 
 }
